@@ -186,6 +186,7 @@ void viewBattery() {
     
     M5.Lcd.drawRect(294, 4, 20, 12, TFT_WHITE);
     M5.Lcd.drawRect(313, 7, 4, 6, TFT_WHITE);
+    M5.Lcd.fillRect(296, 6, 16, 8, TFT_BLACK);
     M5.Lcd.fillRect(296, 6, batteryLevel, 8, TFT_WHITE);
       
     if(batteryCharging) {

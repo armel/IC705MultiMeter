@@ -11,6 +11,7 @@
 ![version](https://img.shields.io/github/v/release/armel/IC705MultiMeter)
 ![activity](https://img.shields.io/github/commit-activity/y/armel/IC705MultiMeter)
 
+**For english users, an excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705Meter application. It can help you !** 
 
 Le projet IC7505MultiMeter permet d'afficher l'équivalent de l'écran Meter (et plus encore) de l'IC705 sur l'écran du M5Stack. Cela permet de dédier l'écran de l'IC705 à la Waterfall tout en ayant l'ensemble des mesures sur l'écran du M5Stack.
 
