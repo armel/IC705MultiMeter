@@ -11,7 +11,7 @@
 ![version](https://img.shields.io/github/v/release/armel/IC705MultiMeter)
 ![activity](https://img.shields.io/github/commit-activity/y/armel/IC705MultiMeter)
 
-**An excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you !** 
+**An excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you ! This is the same approach here.** 
 
 The IC7505MultiMeter project allows you to display the equivalent of the Meter screen of the IC705, directly on the M5Stack screen. This allows you to dedicate the IC705 screen to the Waterfall while having all the measurements on the M5Stack screen.
 
@@ -60,7 +60,7 @@ About the QSJ, count around 45€. You then have a complete development platform
 
 The easiest way is to install [PlateformIO for VSCode](https://platformio.org/install/ide?install=vscode) on your PC (Linux or Windows) or on your Mac (Intel or M1). It is a cross-platform and multilanguage development environment that is powerful and pleasant to use.
 
-Then, still on your PC or Mac, clone the IC705SMeter project via the command :
+Then, still on your PC or Mac, clone the IC705MultiMeter project via the command :
 
 `git clone https://github.com/armel/IC705MultiMeter.git`
 
@@ -102,7 +102,7 @@ Line 8, change the address of your IC705 if necessary. I have indicated the defa
 
 #### Wifi Configuration 
 
-Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC705SMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705SMeter in your browser, just go to `http://ip_address_of_your_ic705multimeter/`. As a reminder, the IP address that your IC705SMeter retrieves is displayed on the screen.
+Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC705MultiMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705MultiMeter in your browser, just go to `http://ip_address_of_your_ic705multimeter/`. As a reminder, the IP address that your IC705MultiMeter retrieves is displayed on the screen.
 
 > Beware: it's slow! And there is no automatic refresh. You have to click on the background of the screen image to make a new capture. And otherwise, as said, the buttons are functional.
 
