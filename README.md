@@ -128,7 +128,7 @@ This is the same as changing the target platform, the semicolon being a comment.
 
 Compile and upload the project to your M5Stack. You are done !
 
-# Instructions for use
+# Usage
 
 Once launched, you must connect your IC705 to your M5Stack via the menu (Set / Bluetooth Set) of your transceiver. Refer to the documentation, if needed.
 
@@ -140,7 +140,81 @@ In addition :
 
 > The value of the brightness is preserved at the next restart.
 
-## Donations
+# Using the Bin Loader (power user only..._)
+
+It's possible to store several applications in the Flash memory of your M5Stack. At startup, a procedure is provided to load a particular application.
+
+## Preparation
+
+I will detail here the procedure to deploy IC705SMeter and IC705MultiMeter applications on the same M5Stack.
+
+### Step 1 - Compile
+
+Start by compiling your applications, as you used to do. Nothing changes here. For example, start by compiling the IC705SMeter application. Then do the same with the IC705MultiMeter application. 
+
+### Step 2 - Collecting the binary files
+
+That's it, you have compiled the IC705SMeter and IC705MultiMeter application? It's perfect.
+
+Each compilation has produced a binary. It is this binary that is sent / flashed to your M5Stack, via the USB connection.
+
+Go to the root of the IC705SMeter folder, which contains the whole project. And go to the :
+
+- `.pio/build/m5stack-basic-grey`, if you compiled for a GREY or BASIC M5Stack
+- `.pio/build/m5stack-core2`, if you compiled for M5Stack CORE2 or AWS
+
+You will find a `firmware.bin` file there. Copy it in the `data` directory at the root of the IC705SMeter folder. And take the opportunity to rename it to, for example, `IC705SMeter.bin`.
+
+> If the `data` folder does not exist, create it.
+
+Do the same with the IC705MultiMeter application. Go to the root of the IC705MultiMeter folder, which contains the whole project. And go to the directory :
+
+- `.pio/build/m5stack-basic-grey`, if you have compiled for a M5Stack GREY or BASIC
+- `.pio/build/m5stack-core2`, if you compiled for M5Stack CORE2 or AWS
+
+You will also find a `firmware.bin` file. Copy it, too, in the `data` directory at the root of the IC705SMeter folder. And take the opportunity to rename it to, for example, `IC705MultiMeter.bin`.
+
+> Important, the idea is to copy these 2 binaries in the same directory `data`** (located at the root of the IC705SMeter folder).
+
+At this point, you should have 2 clearly identified binaries: `IC705SMeter.bin` and `IC705MultiMeter.bin` in the `data` directory at the root of the IC705SMeter folder.
+
+### Step 3 - Copy to M5Stack Flash Memory
+
+Let's move on to what is probably the most complicated step. Open the IC705SMeter project from Visual Studio Code, as you would compile it. 
+
+![Capture](https://github.com/armel/RRFRemote/blob/main/img/flash_1.png)
+
+Step 1, click on the Platformio icon (the icon with an ant's head...). Step 2, unroll the section :
+
+- `m5stack-basic-grey`, if you have compiled for an M5Stack GREY or BASIC
+- `m5stack-core2`, if you compiled for M5Stack CORE2 or AWS
+
+![Capture](https://github.com/armel/RRFRemote/blob/main/img/flash_2.png)
+
+Finally, step 3, go to the `Platform` sub-section. And click on `Upload Filesystem Image`.
+
+Wait ! It's coffee time (or beer) :) The contents of the `data` directory will be written to the Flash memory of your M5Stack. Are you done? You're there !!!!
+
+## Usage
+
+Start your M5Stack. You should see a black screen, followed by 1, 2 and 3 small dots at the top of the screen. This is the famous Bin Loader ;)
+
+As soon as the first little dot appears, you can :
+
+- either press the left or right button, to launch the default application.
+- or press the central button. In this case, the Bin Loader menu appears and offers you the list of available binaries in Flash memory. 
+
+If you have followed the procedure perfectly, you should have a choice between `IC705SMeter.bin` and `IC705MultiMeter.bin`.
+
+The left and right buttons allow you to switch from one binary to another. And the middle button validates the selected binary. In this case, the selected application will be loaded ;)
+
+> The loading takes about 20 seconds...
+
+## Limitation
+
+I think it is possible to have 3 or 4 applications cohabit in the Flash memory of your M5Stack. That seems to me to be enough. If needed, I would adapt the code for the binaries on the SD card. 
+
+# Donations
 
 If you find this project fun and useful then [offer me a beer](https://www.paypal.me/F4HWN) :) 
 
