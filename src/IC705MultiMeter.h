@@ -26,7 +26,6 @@
   #include "WebIndexCore2.h"
 #endif
 
-#include <WiFiClientSecure.h>
 #include <Preferences.h>
 #include <FastLED.h>
 #include <HTTPClient.h>
