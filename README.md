@@ -140,7 +140,7 @@ In addition :
 
 > The value of the brightness is preserved at the next restart.
 
-# Using the Bin Loader (power user only..._)
+# Using the Bin Loader (power user only...)
 
 It's possible to store several applications in the Flash memory of your M5Stack. At startup, a procedure is provided to load a particular application.
 
