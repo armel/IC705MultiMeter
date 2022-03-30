@@ -134,3 +134,7 @@ En complément :
 - un appui prolongé sur le bouton droit permet d'augmenter la luminosité.
 
 > La valeur de la luminosité est conservée au prochain redemarrage.
+
+
+## Donations
+If you find this app fun and useful then [offer me a beer](https://www.paypal.me/F4HWN) :)
