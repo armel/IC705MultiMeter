@@ -102,7 +102,7 @@ Line 8, change the address of your IC705 if necessary. I have indicated the defa
 
 #### Wifi Configuration 
 
-Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC705SMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705SMeter in your browser, just go to `http://ip_address_of_your_ic705smeter/`. As a reminder, the IP address that your IC705SMeter retrieves is displayed on the screen.
+Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC705SMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705SMeter in your browser, just go to `http://ip_address_of_your_ic705multimeter/`. As a reminder, the IP address that your IC705SMeter retrieves is displayed on the screen.
 
 > Beware: it's slow! And there is no automatic refresh. You have to click on the background of the screen image to make a new capture. And otherwise, as said, the buttons are functional.
 
