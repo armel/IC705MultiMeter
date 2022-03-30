@@ -26,7 +26,7 @@ The IC7505MultiMeter project allows you to display the equivalent of the Meter s
 
 In terms of size and weight, it is very compact: 54 x 54 x 18mm for 47.2g. Can be carried in the pocket without any problem ;)
 
-## Detailed technical specs :
+## Detailed technical specs
 
 Here are the detailed technical specs, for the curious:
 
