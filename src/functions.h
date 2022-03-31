@@ -17,7 +17,7 @@ void callbackBT(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
   }
 }
 
-// List files on SPIFFS
+// List files on SPIFFS or SD
 void getBinaryList(File dir, String type)
 {
   while (true)
