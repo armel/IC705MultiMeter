@@ -17,8 +17,8 @@ void callbackBT(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
   }
 }
 
-// List files on SPIFFS
-void getBinaryList(File dir)
+// List files on SPIFFS or SD
+void getBinaryList(File dir, String type)
 {
   while (true)
   {
@@ -30,14 +30,15 @@ void getBinaryList(File dir)
     }
 
     if (strstr(entry.name(), "/.") == NULL && strstr(entry.name(), ".bin") != NULL)
-    {
-      binFilename[binIndex] = entry.name();
+    { 
+      //Serial.println(type + "_" + entry.name());     
+      binFilename[binIndex] = type + "_" + entry.name();
       binIndex++;
     }
 
     if (entry.isDirectory() && strstr(entry.name(), "/.") == NULL)
     {
-      getBinaryList(entry);
+      getBinaryList(entry, type);
     }
 
     entry.close();
@@ -49,6 +50,9 @@ void binLoader()
 {
   boolean click = 0;
   int8_t cursor = 0;
+  int8_t start = 0;
+  int8_t stop = 0;
+  int8_t limit = 8;
   int8_t change = 255;
   String tmpName;
 
@@ -78,7 +82,13 @@ void binLoader()
   }
 
   root = SPIFFS.open("/");
-  getBinaryList(root);
+  getBinaryList(root, "SP");
+
+
+  if (SD.begin()) {
+    root = SD.open("/");
+    getBinaryList(root, "SD");
+  }
 
   if (binIndex != 0)
   {
@@ -125,7 +135,7 @@ void binLoader()
 
     M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
     M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.drawString("Bin Loader", 160, 20);
+    M5.Lcd.drawString("Bin Loader V0.2", 160, 20);
 
     getButton();
 
@@ -139,28 +149,57 @@ void binLoader()
     }
     else if (btnB)
     {
-      updateFromFS(SPIFFS, binFilename[cursor]);
+      if(binFilename[cursor].substring(0, 4) == "SP_/") {
+        updateFromFS(SPIFFS, binFilename[cursor].substring(3));
+      }
+      else {
+        updateFromFS(SD, binFilename[cursor].substring(3));
+      }
       ESP.restart();
     }
 
     cursor = (cursor < 0) ? binIndex - 1 : cursor;
     cursor = (cursor > binIndex - 1) ? 0 : cursor;
 
+    start = cursor / limit;
+
+    stop = (start * limit) + limit;
+    
+    /*
+    Serial.print(cursor);
+    Serial.print("-");
+    Serial.print(start);
+    Serial.print("-");
+    Serial.print(stop);
+    Serial.println("----------");
+    */
+
     if (change != cursor)
     {
       change = cursor;
       M5.Lcd.setTextPadding(320);
 
-      for (uint8_t i = 0; i < binIndex; i++)
+      uint8_t i = 0;
+      for (uint8_t j = (start * limit); j < stop; j++)
       {
-        tmpName = binFilename[i].substring(1);
+        tmpName = binFilename[j].substring(4);
 
-        if (cursor == i)
+        if (cursor == j)
         {
           tmpName = ">> " + tmpName + " <<";
+
+          M5.Lcd.setTextSize(1);
+          if(binFilename[cursor].substring(0, 4) == "SP_/") {
+            M5.Lcd.drawString("SPI Flash File Storage", 160, 50);
+          }
+          else {
+            M5.Lcd.drawString("SD Card Storage", 160, 50);
+          }
         }
 
-        M5.Lcd.drawString(tmpName, 160, 60 + i * 20);
+        M5.Lcd.setTextSize(2);
+        M5.Lcd.drawString(tmpName, 160, 80 + i * 20);
+        i++;
       }
     }
     vTaskDelay(100);
