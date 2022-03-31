@@ -110,6 +110,7 @@ void binLoader()
 
       if (btnA || btnC)
       {
+        SD.end(); // If not Bluetooth doesn't work !!!
         return;
       }
       else if (btnB)
@@ -188,11 +189,12 @@ void binLoader()
         {
           tmpName = ">> " + tmpName + " <<";
 
-          M5.Lcd.setTextSize(1);
           if(binFilename[cursor].substring(0, 4) == "SP_/") {
+            M5.Lcd.setTextSize(1);
             M5.Lcd.drawString("SPI Flash File Storage", 160, 50);
           }
           else {
+            M5.Lcd.setTextSize(1);
             M5.Lcd.drawString("SD Card Storage", 160, 50);
           }
         }
@@ -204,6 +206,7 @@ void binLoader()
     }
     vTaskDelay(100);
   }
+  SD.end(); // If not Bluetooth doesn't work !!!
 }
 
 // Print battery
