@@ -35,7 +35,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "0.0.2"
+#define VERSION "0.0.3"
 #define AUTHOR "F4HWN"
 #define NAME "IC705MultiMeter"
 
@@ -91,7 +91,7 @@ bool buttonRightPressed = false;
 
 // Bin loader
 File root;
-String binFilename[8];
+String binFilename[128];
 uint8_t binIndex = 0;
 
 // Optimize SPI Speed
