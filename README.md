@@ -142,7 +142,7 @@ In addition :
 
 # Using the Bin Loader (power user only...)
 
-It's possible to store several applications on the SPI Flash File Storage of your M5Stack or on SD Card Storage. At startup, a procedure is provided to load a particular application.
+It's possible to store several applications on the SPI Flash File Storage of your M5Stack. At startup, a procedure is provided to load a particular application.
 
 ## Preparation
 
@@ -163,19 +163,9 @@ Go to the root of the IC705SMeter folder, which contains the whole project. And 
 - `.pio/build/m5stack-basic-grey`, if you compiled for a GREY or BASIC M5Stack
 - `.pio/build/m5stack-core2`, if you compiled for M5Stack CORE2 or AWS
 
-You will find a `firmware.bin` file there. Now, there are 2 solutions...
+You will find a `firmware.bin` file there.
 
-### Step 2.1 - SD Card Storage (simple)
-
-Format an SD Card as FAT32.
-
-Copy the `firmware.bin` at the root of the SD Card. And take the opportunity to rename it, for example, `IC705SMeter.bin`.
-
-Do the same with the IC705MultiMeter application. Of course rename it with a different name, for example, `IC705MultiMeter.bin`.
-
-At this point, you should have 2 clearly identified binaries in the root of your SD Card : `IC705SMeter.bin` and `IC705MultiMeter.bin`.
-
-### Step 2.2 - SPI Flash File Storage (more difficult)
+### Step 3 - SPI Flash File Storage
 
 Copy `firmware.bin` in the `data` directory at the root of the IC705SMeter folder. And take the opportunity to rename it, for example, `IC705SMeter.bin`.
 
@@ -214,7 +204,7 @@ Start your M5Stack. You should see a black screen, followed by 1, 2 and 3 small 
 As soon as the first little dot appears, you can :
 
 - either press the left or right button, to launch the default application.
-- or press the central button. In this case, the Bin Loader menu appears and offers you the list of available binaries in SPI Flash File Storage or SD Card. 
+- or press the central button. In this case, the Bin Loader menu appears and offers you the list of available binaries in SPI Flash File Storage. 
 
 If you have followed the procedure perfectly, you should have a choice between `IC705SMeter.bin` and `IC705MultiMeter.bin`.
 
@@ -224,7 +214,7 @@ The left and right buttons allow you to switch from one binary to another. And t
 
 ## Limitation
 
-I think it is possible to have 3 or 4 applications cohabit in SPI Flash File Storage. If need more, use SD Card Storage.
+I think it is possible to have 3 or 4 applications cohabit in SPI Flash File Storage.
 
 # Donations
 
