@@ -15,6 +15,9 @@ void setup()
   // Debug
   Serial.begin(115200);
 
+  // Init screensaver timer
+  screensaver = millis();
+
   // Init M5
   M5.begin(true, true, false, false);
 
@@ -155,6 +158,7 @@ void loop()
       getSmeterLevel();
     }
     else {
+      screensaver = millis();   // If transmit, refresh tempo
       if(needClear) {
         for(uint8_t i = 0; i <= 9; i++){
           leds[i] = CRGB::Red;
@@ -230,6 +234,9 @@ void loop()
 
   // View baseline
   viewBaseline();
+
+  // Manage Screen Saver
+  wakeAndSleep();
 
   // Manage Web Server if enable
   if (WiFi.status() == WL_CONNECTED)

@@ -321,7 +321,9 @@ void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
           counter++;
           if (counter > limit)
           {
-            Serial.print(" Overflow");
+            if(DEBUG) {
+              Serial.print(" Overflow");
+            }
             break;
           }
         }
@@ -798,5 +800,37 @@ void getScreenshot()
       httpClient.stop();
       // Serial.println("Client Disconnected.");
     }
+  }
+}
+
+// Manage screensaver
+void wakeAndSleep()
+{
+  if (screensaverMode == 0 && millis() - screensaver > TIMEOUT_SCREENSAVER)
+  {
+    for (uint8_t i = brightness; i >= 1; i--)
+    {
+      setBrightness(i);
+      delay(10);
+    }
+    screensaverMode = 1;
+    screensaver = 0;
+    M5.Lcd.sleep();
+  }
+  else if (screensaverMode == 1 && screensaver != 0)
+  {
+    M5.Lcd.wakeup();
+    screensaverMode = 0;
+    for (uint8_t i = 1; i <= brightness; i++)
+    {
+      setBrightness(i);
+      delay(10);
+    }
+  }
+  
+  if(DEBUG) {
+    Serial.print(screensaverMode);
+    Serial.print(" ");
+    Serial.println(millis() - screensaver);
   }
 }

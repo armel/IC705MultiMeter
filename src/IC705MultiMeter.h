@@ -7,7 +7,9 @@
 #define GREY 2
 #define CORE2 3
 
-#define TIMEOUT_BIN_LOADER 3 // 3 sec
+#define TIMEOUT_BIN_LOADER  3               // 3 sec
+#define TIMEOUT_SCREENSAVER 1 * 60 * 1000   // 30 min
+#define DEBUG false
 
 #if BOARD == BASIC
   #define LED_PIN 15
@@ -35,11 +37,10 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "0.0.5"
+#define VERSION "0.0.6"
 #define AUTHOR "F4HWN"
 #define NAME "IC705MultiMeter"
 
-#define DEBUG true
 #define FASTLED_INTERNAL // To disable pragma messages on compile
 #define STEP 2
 
@@ -71,6 +72,8 @@ uint8_t htmlGetRefresh = 3;
 uint8_t option = 2;
 uint8_t brightness = 64;
 uint16_t bande = 28;
+uint32_t screensaver;
+boolean screensaverMode = 0;
 boolean reset = true;
 boolean btConnected = false;
 boolean needClear = true;
