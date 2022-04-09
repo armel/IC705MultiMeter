@@ -5,7 +5,6 @@
 void getSmeterLevel()
 {
   uint8_t value;
-  static uint8_t sOld = 255;
   uint8_t limit;
 
   char str[2];
@@ -65,7 +64,6 @@ void getSmeterLevel()
 void getSWRLevel()
 {
   uint8_t value;
-  static uint8_t SWROld = 255;
   uint8_t limit;
 
   char str[2];
@@ -84,10 +82,7 @@ void getSWRLevel()
     Serial.println(value);
   }
 
-  if (needClear)
-  {
-    SWROld = 255;
-  }
+  if (needClear) SWROld = 255;
 
   if (value != SWROld)
   {
@@ -141,7 +136,6 @@ void getSWRLevel()
 void getPowerLevel(uint8_t charge = 0)
 {
   uint8_t value;
-  static uint8_t powerOld = 255;
   uint8_t limit;
 
   char str[2];
@@ -160,14 +154,11 @@ void getPowerLevel(uint8_t charge = 0)
     Serial.println(value);
   }
 
+  if (needClear) powerOld = 255;
+
   if (value > 213)
   {
     value = 213;
-  }
-
-  if (needClear)
-  {
-    powerOld = 255;
   }
 
   if (value != powerOld)
@@ -239,7 +230,6 @@ void getFrequency()
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x03, 0xFD};
 
   String frequency;
-  static String frequencyOld;
 
   String val0;
   String val1;
@@ -305,8 +295,6 @@ uint8_t getModeData()
 uint8_t getModeFilter()
 {
   String value;
-  static String filterOld;
-  static String modeOld;
 
   char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x04, 0xFD};
@@ -323,6 +311,7 @@ uint8_t getModeFilter()
   M5.Lcd.setTextDatum(CC_DATUM);
 
   value = "FIL" + String(uint8_t(buffer[4]));
+
   if (value != filterOld)
   {
     filterOld = value;
@@ -362,7 +351,6 @@ uint8_t getModeFilter()
 void getVdLevel()
 {
   uint8_t value;
-  static uint8_t VdOld = 0;
   uint8_t limit;
 
   char str[2];
@@ -408,7 +396,6 @@ void getVdLevel()
 void getIdLevel()
 {
   uint8_t value;
-  static uint8_t IdOld = 255;
   uint8_t limit;
 
   char str[2];
@@ -427,10 +414,7 @@ void getIdLevel()
     Serial.println(value);
   }
 
-  if (needClear)
-  {
-    IdOld = 255;
-  }
+  if (needClear) IdOld = 255;
 
   if (value != IdOld)
   {
@@ -464,7 +448,6 @@ void getIdLevel()
 void getALCLevel()
 {
   uint8_t value;
-  static uint8_t ALCOld = 127;
   uint8_t limit;
 
   char str[2];
@@ -513,7 +496,6 @@ void getALCLevel()
 uint8_t getTX()
 {
   uint8_t value;
-  static uint8_t TXOld = 127;
 
   char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x1C, 0x00, 0xFD};
@@ -531,7 +513,7 @@ uint8_t getTX()
     value = 0;
   }
 
-  if (value != TXOld)
+  if (value != TXOld && btConnected)
   {
     TXOld = value;
 
@@ -562,7 +544,6 @@ uint8_t getTX()
 void getAGC()
 {
   uint8_t value;
-  static uint8_t agcOld = 127;
 
   char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x16, 0x12, 0xFD};
@@ -603,7 +584,6 @@ void getAGC()
 void getAN()
 {
   uint8_t value;
-  static uint8_t ANOld = 127;
 
   char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x16, 0x41, 0xFD};
@@ -644,7 +624,6 @@ void getAN()
 void getNB()
 {
   uint8_t value;
-  static uint8_t NBOld = 127;
 
   char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x16, 0x22, 0xFD};
@@ -685,7 +664,6 @@ void getNB()
 void getNR()
 {
   uint8_t value;
-  static uint8_t NROld = 127;
 
   char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x16, 0x40, 0xFD};
@@ -726,7 +704,6 @@ void getNR()
 void getAMP()
 {
   uint8_t value;
-  static uint8_t AMPOld = 127;
 
   char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x16, 0x02, 0xFD};
@@ -772,7 +749,6 @@ void getAMP()
 void getTone(boolean retry = true)
 {
   uint8_t value;
-  static uint8_t toneOld = 127;
 
   char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x16, 0x5D, 0xFD};
@@ -818,7 +794,6 @@ void getTone(boolean retry = true)
 uint8_t getAF()
 {
   uint8_t value;
-  static uint8_t AFOld = 127;
   uint8_t limit;
 
   char str[2];
@@ -868,7 +843,6 @@ uint8_t getAF()
 uint8_t getMIC()
 {
   uint8_t value;
-  static uint8_t MICOld = 127;
   uint8_t limit;
 
   char str[2];
@@ -918,7 +892,6 @@ uint8_t getMIC()
 uint8_t getSQL()
 {
   uint8_t value;
-  static uint8_t SQLOld = 127;
   uint8_t limit;
 
   char str[2];
@@ -968,7 +941,6 @@ uint8_t getSQL()
 uint8_t getCOMP(boolean retry = true)
 {
   uint8_t value;
-  static uint8_t COMPOld = 127;
 
   char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x16, 0x44, 0xFD};
@@ -1015,7 +987,6 @@ uint8_t getCOMP(boolean retry = true)
 void getCOMPLevel()
 {
   uint8_t value;
-  static uint8_t COMPOld = 255;
   uint8_t limit;
 
   char str[2];
@@ -1033,19 +1004,16 @@ void getCOMPLevel()
     value = 210;
   }
 
-  if (needClear)
-  {
-    COMPOld = 255;
-  }
+  if (needClear) COMPLOld = 255;
 
   if(DEBUG) {
     Serial.print("COMP Level ");
     Serial.println(value);
   }
 
-  if (value != COMPOld)
+  if (value != COMPLOld)
   {
-    COMPOld = value;
+    COMPLOld = value;
 
     const char *legendeCOMP[] = {"0", "5", "10", "15", "20"};
 
@@ -1080,7 +1048,6 @@ void getRIT()
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x21, 0x00, 0xFD};
 
   String RIT;
-  static String RITOld;
 
   String val0;
   String val1;

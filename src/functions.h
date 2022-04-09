@@ -6,12 +6,14 @@ void callbackBT(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
 {
   if (event == ESP_SPP_SRV_OPEN_EVT)
   {
+    screensaver = millis();
+    M5.Lcd.wakeup();
     Serial.println("Client Connected");
     btConnected = true;
   }
-
   if (event == ESP_SPP_CLOSE_EVT)
   {
+    M5.Lcd.sleep();
     Serial.println("Client disconnected");
     btConnected = false;
   }
@@ -211,39 +213,38 @@ void binLoader()
 
 // Print battery
 void viewBattery() {
-  static uint8_t batteryLevelOld = 0;
-  static boolean batteryCharginglOld = 0;
-
   uint8_t batteryLevel;
   boolean batteryCharging;
 
-  // On left, view battery level
-  batteryLevel = map(getBatteryLevel(1), 0, 100, 0, 16);
-  batteryCharging = isCharging();
+  if(screensaverMode == 0) {
+    // On left, view battery level
+    batteryLevel = map(getBatteryLevel(1), 0, 100, 0, 16);
+    batteryCharging = isCharging();
 
-  if(batteryLevel != batteryLevelOld || batteryCharging != batteryCharginglOld) {
+    if(batteryLevel != batteryLevelOld || batteryCharging != batteryCharginglOld) {
 
-    batteryLevelOld = batteryLevel;
-    batteryCharginglOld = batteryCharging;
-    
-    M5.Lcd.drawRect(294, 4, 20, 12, TFT_WHITE);
-    M5.Lcd.drawRect(313, 7, 4, 6, TFT_WHITE);
-    M5.Lcd.fillRect(296, 6, 16, 8, TFT_BLACK);
-    M5.Lcd.fillRect(296, 6, batteryLevel, 8, TFT_WHITE);
+      batteryLevelOld = batteryLevel;
+      batteryCharginglOld = batteryCharging;
       
-    if(batteryCharging) {
-      M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-      M5.Lcd.setFreeFont(0);
-      M5.Lcd.setTextDatum(CR_DATUM);
-      M5.Lcd.setTextPadding(28);
-      M5.Lcd.drawString("+", 290, 11);
-    }
-    else {
-      M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-      M5.Lcd.setFreeFont(0);
-      M5.Lcd.setTextDatum(CR_DATUM);
-      M5.Lcd.setTextPadding(28);
-      M5.Lcd.drawString(String(getBatteryLevel(1)) + "%", 290, 11);
+      M5.Lcd.drawRect(294, 4, 20, 12, TFT_WHITE);
+      M5.Lcd.drawRect(313, 7, 4, 6, TFT_WHITE);
+      M5.Lcd.fillRect(296, 6, 16, 8, TFT_BLACK);
+      M5.Lcd.fillRect(296, 6, batteryLevel, 8, TFT_WHITE);
+        
+      if(batteryCharging) {
+        M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+        M5.Lcd.setFreeFont(0);
+        M5.Lcd.setTextDatum(CR_DATUM);
+        M5.Lcd.setTextPadding(28);
+        M5.Lcd.drawString("+", 290, 11);
+      }
+      else {
+        M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+        M5.Lcd.setFreeFont(0);
+        M5.Lcd.setTextDatum(CR_DATUM);
+        M5.Lcd.setTextPadding(28);
+        M5.Lcd.drawString(String(getBatteryLevel(1)) + "%", 290, 11);
+      }
     }
   }
 }
@@ -253,39 +254,41 @@ void viewBaseline()
 {
   static uint8_t temporisation = 0;
 
-  if(btnL || btnR)
-  {
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.setFreeFont(0);
-    M5.Lcd.setTextPadding(200);
-    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BLACK);
-    M5.Lcd.drawString("Brightness " + String(map(brightness, 1, 254, 1, 100)) + "%", 160, 100);
-  }
-  else {
-    temporisation = (temporisation++ < 40) ? temporisation : 0;
-
-    if (temporisation > 36 && temporisation < 40 && WiFi.status() == WL_CONNECTED)
+  if(screensaverMode == 0) {
+    if(btnL || btnR)
     {
       M5.Lcd.setTextDatum(CC_DATUM);
       M5.Lcd.setFreeFont(0);
       M5.Lcd.setTextPadding(200);
       M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BLACK);
-      M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 100);
-    }
-    else if (temporisation > 16 && temporisation < 20)
-    {
-      M5.Lcd.setTextDatum(CC_DATUM);
-      M5.Lcd.setFreeFont(0);
-      M5.Lcd.setTextPadding(200);
-      M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BLACK);
-      M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 100);
+      M5.Lcd.drawString("Brightness " + String(map(brightness, 1, 254, 1, 100)) + "%", 160, 100);
     }
     else {
-      M5.Lcd.setTextDatum(CC_DATUM);
-      M5.Lcd.setFreeFont(0);
-      M5.Lcd.setTextPadding(200);
-      M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BLACK);
-      M5.Lcd.drawString(" ", 160, 100);
+      temporisation = (temporisation++ < 40) ? temporisation : 0;
+
+      if (temporisation > 36 && temporisation < 40 && WiFi.status() == WL_CONNECTED)
+      {
+        M5.Lcd.setTextDatum(CC_DATUM);
+        M5.Lcd.setFreeFont(0);
+        M5.Lcd.setTextPadding(200);
+        M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BLACK);
+        M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 100);
+      }
+      else if (temporisation > 16 && temporisation < 20)
+      {
+        M5.Lcd.setTextDatum(CC_DATUM);
+        M5.Lcd.setFreeFont(0);
+        M5.Lcd.setTextPadding(200);
+        M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BLACK);
+        M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 100);
+      }
+      else {
+        M5.Lcd.setTextDatum(CC_DATUM);
+        M5.Lcd.setFreeFont(0);
+        M5.Lcd.setTextPadding(200);
+        M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BLACK);
+        M5.Lcd.drawString(" ", 160, 100);
+      }
     }
   }
 }
@@ -611,6 +614,36 @@ void clearGUI()
   M5.Lcd.drawString("dB", 204, 174);
 }
 
+void clearData() 
+{
+  sOld = 255;
+  SWROld = 255;
+  powerOld = 255;
+  IdOld = 255;
+  COMPLOld = 255;
+  ALCOld = 127;
+  TXOld = 127;
+  agcOld = 127;
+  ANOld = 127;
+  NBOld = 127;
+  NROld = 127;
+  AMPOld = 127;
+  toneOld = 127;
+  AFOld = 127;
+  MICOld = 127;
+  SQLOld = 127;
+  COMPOld = 127;
+  VdOld = 0;
+  batteryLevelOld = 0;
+
+  frequencyOld = "";
+  filterOld = "";
+  modeOld = "";
+  RITOld = "";
+
+  batteryCharginglOld = true;
+}
+
 // Get 24bits BMP
 bool M5Screen24bmp()
 {
@@ -714,6 +747,9 @@ void getScreenshot()
               // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
               // and a content-type so the client knows what's coming, then a blank line,
               // followed by the content:
+
+              screensaver = millis(); // Screensaver update !!!
+
               switch (htmlGetRequest)
               {
               case GET_index_page:
@@ -806,6 +842,12 @@ void getScreenshot()
 // Manage screensaver
 void wakeAndSleep()
 {
+  static uint16_t x = rand() % 232;
+  static uint16_t y = rand() % 196;
+  static boolean xDir = rand() & 1;
+  static boolean yDir = rand() & 1;
+
+  /*
   if (screensaverMode == 0 && millis() - screensaver > TIMEOUT_SCREENSAVER)
   {
     for (uint8_t i = brightness; i >= 1; i--)
@@ -827,7 +869,65 @@ void wakeAndSleep()
       delay(10);
     }
   }
+  */
+
+  if (screensaverMode == 0 && millis() - screensaver > TIMEOUT_SCREENSAVER)
+  {
+    screensaverMode = 1;
+    screensaver = 0;
+    M5.Lcd.fillScreen(TFT_BLACK);
+  }
+  else if (screensaverMode == 1 && screensaver != 0)
+  {
+    M5.Lcd.fillScreen(TFT_BLACK);
+    clearData();
+    viewGUI();
+    screensaverMode = 0;
+
+    vTaskDelay(100);
+  }
+  else if (screensaverMode == 1) {
   
+    M5.Lcd.fillRect(x, y, 44, 22, TFT_BLACK);
+
+    if(xDir)
+    {
+      x += 1;
+    }
+    else {
+      x -= 1;
+    }
+
+    if(yDir)
+    {
+      y += 1;
+    }
+    else {
+      y -= 1;
+    }
+
+    if(x < 44) {
+      xDir = true;
+      x = 44;
+    }
+    else if(x > 232) {
+      xDir = false;
+      x = 232;
+    }
+
+    if(y < 22) {
+      yDir = true;
+      y = 22;
+    }
+    else if(y > 196) {
+      yDir = false;
+      y = 196;
+    }
+
+    M5.Lcd.drawJpg(logo, sizeof(logo), x, y, 44, 22);
+    if(!btConnected) vTaskDelay(75);
+  }
+
   if(DEBUG) {
     Serial.print(screensaverMode);
     Serial.print(" ");

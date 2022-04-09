@@ -7,9 +7,8 @@
 #define GREY 2
 #define CORE2 3
 
-#define TIMEOUT_BIN_LOADER  3               // 3 sec
-#define TIMEOUT_SCREENSAVER 1 * 60 * 1000   // 30 min
-#define DEBUG false
+#define TIMEOUT_BIN_LOADER  3                 // 3 sec
+#define DEBUG true
 
 #if BOARD == BASIC
   #define LED_PIN 15
@@ -74,9 +73,35 @@ uint8_t brightness = 64;
 uint16_t bande = 28;
 uint32_t screensaver;
 boolean screensaverMode = 0;
-boolean reset = true;
 boolean btConnected = false;
 boolean needClear = true;
+
+uint8_t sOld = 255;
+uint8_t SWROld = 255;
+uint8_t powerOld = 255;
+uint8_t IdOld = 255;
+uint8_t COMPLOld = 255;
+uint8_t ALCOld = 127;
+uint8_t TXOld = 127;
+uint8_t agcOld = 127;
+uint8_t ANOld = 127;
+uint8_t NBOld = 127;
+uint8_t NROld = 127;
+uint8_t AMPOld = 127;
+uint8_t toneOld = 127;
+uint8_t AFOld = 127;
+uint8_t MICOld = 127;
+uint8_t SQLOld = 127;
+uint8_t COMPOld = 127;
+uint8_t VdOld = 0;
+uint8_t batteryLevelOld = 0;
+
+String frequencyOld = "";
+String filterOld = "";
+String modeOld = "";
+String RITOld = "";
+
+boolean batteryCharginglOld = true;
 
 // LED
 #define NUM_LEDS 10
