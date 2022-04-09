@@ -15,6 +15,9 @@ void setup()
   // Debug
   Serial.begin(115200);
 
+  // Init screensaver timer
+  screensaver = millis();
+
   // Init M5
   M5.begin(true, true, false, false);
 
@@ -107,113 +110,119 @@ void loop()
   static uint8_t mode = 0;
   static uint8_t charge = 0;
   static uint8_t comp = 0;
-
+  
   if (btConnected == false)
   {
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.setFreeFont(&UniversCondensed20pt7b);
-    M5.Lcd.setTextPadding(200);
-    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Lcd.drawString("Need Pairing", 160, 70);
-    vTaskDelay(500);
-    M5.Lcd.drawString("", 160, 70);
-    vTaskDelay(100);
-    Serial.println("Need Pairing");
-  }
-  else
-  {
-    tx = getTX();
-
-    if(charge != chargeOld) {
-      chargeOld = charge;
-      M5.Lcd.setFreeFont(0);
-      M5.Lcd.setTextPadding(35);
-      M5.Lcd.setTextDatum(CR_DATUM);
+    if(screensaverMode == 0) {
+      M5.Lcd.setTextDatum(CC_DATUM);
+      M5.Lcd.setFreeFont(&UniversCondensed20pt7b);
+      M5.Lcd.setTextPadding(200);
       M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+      M5.Lcd.drawString("Need Pairing", 160, 70);
+      vTaskDelay(500);
+      M5.Lcd.drawString("", 160, 70);
+      vTaskDelay(100);
+      Serial.println("Need Pairing");
+    }
+  }
+  else {
+    tx = getTX();
+    if(tx != 0) screensaver = millis();   // If transmit, refresh tempo
 
-      if(charge == 0) {
-        M5.Lcd.drawString("(10W)", 194, 138);
+    if(screensaverMode == 0)
+    {
+      if(charge != chargeOld) {
+        chargeOld = charge;
+        M5.Lcd.setFreeFont(0);
+        M5.Lcd.setTextPadding(35);
+        M5.Lcd.setTextDatum(CR_DATUM);
+        M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+
+        if(charge == 0) {
+          M5.Lcd.drawString("(10W)", 194, 138);
+        }
+        else {
+          M5.Lcd.drawString("(5W)", 194, 138);
+        }
+      }  
+
+      getFrequency();
+      
+      if(tx == 0) {
+        if(needClear == false) {
+          getALCLevel();
+          clearGUI();
+          for(uint8_t i = 0; i <= 9; i++){
+            leds[i] = CRGB::Black;
+          }
+          FastLED.setBrightness(16);
+          FastLED.show();
+          needClear = true;
+        }
+        getSmeterLevel();
       }
       else {
-        M5.Lcd.drawString("(5W)", 194, 138);
-      }
-    }  
+        screensaver = millis();   // If transmit, refresh tempo
+        if(needClear) {
+          for(uint8_t i = 0; i <= 9; i++){
+            leds[i] = CRGB::Red;
+          }
+          FastLED.setBrightness(16);
+          FastLED.show();
+          needClear = false;
+        }
 
-    getFrequency();
-    
-    if(tx == 0) {
-      if(needClear == false) {
         getALCLevel();
-        clearGUI();
-        for(uint8_t i = 0; i <= 9; i++){
-          leds[i] = CRGB::Black;
+        getSWRLevel();
+        getIdLevel();
+        if(mode <= 1 && comp == 1) {
+          getCOMPLevel();
         }
-        FastLED.setBrightness(16);
-        FastLED.show();
-        needClear = true;
-      }
-      getSmeterLevel();
-    }
-    else {
-      if(needClear) {
-        for(uint8_t i = 0; i <= 9; i++){
-          leds[i] = CRGB::Red;
-        }
-        FastLED.setBrightness(16);
-        FastLED.show();
-        needClear = false;
+        getPowerLevel(charge);
       }
 
-      getALCLevel();
-      getSWRLevel();
-      getIdLevel();
-      if(mode <= 1 && comp == 1) {
-        getCOMPLevel();
+      switch (alternance)
+      {
+        case 0:
+          charge = getPowerType();
+          if(mode == 5 || mode == 6) {
+            getTone();
+          }
+          else {
+            getTone(false);
+          }
+          getAGC();
+          getAMP();
+          getVdLevel();
+          break;
+
+        case 1:
+          mode = getModeFilter();
+          getNR();
+          getNB();
+          getAN();
+          getRIT();
+          break;
+
+        case 2:
+          if(mode <= 1) {
+            comp = getCOMP();
+          }
+          else {
+            comp = getCOMP(false);
+          }
+          getAF();
+          getSQL();
+          getMIC();
+          break;
       }
-      getPowerLevel(charge);
-    }
 
-    switch (alternance)
-    {
-      case 0:
-        charge = getPowerType();
-        if(mode == 5 || mode == 6) {
-          getTone();
-        }
-        else {
-          getTone(false);
-        }
-        getAGC();
-        getAMP();
-        getVdLevel();
-        break;
-
-      case 1:
-        mode = getModeFilter();
-        getNR();
-        getNB();
-        getAN();
-        getRIT();
-        break;
-
-      case 2:
-        if(mode <= 1) {
-          comp = getCOMP();
-        }
-        else {
-          comp = getCOMP(false);
-        }
-        getAF();
-        getSQL();
-        getMIC();
-        break;
-    }
-
-    if(tx == 0) {
-      getSmeterLevel();
-    }
-    else {
-      getPowerLevel(charge);
+      if(tx == 0) {
+        getSmeterLevel();
+      }
+      else {
+        getPowerLevel(charge);
+      }
     }
   }
 
@@ -230,6 +239,9 @@ void loop()
 
   // View baseline
   viewBaseline();
+
+  // Manage Screen Saver
+  wakeAndSleep();
 
   // Manage Web Server if enable
   if (WiFi.status() == WL_CONNECTED)

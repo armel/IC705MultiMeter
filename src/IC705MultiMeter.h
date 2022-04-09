@@ -7,7 +7,8 @@
 #define GREY 2
 #define CORE2 3
 
-#define TIMEOUT_BIN_LOADER 3 // 3 sec
+#define TIMEOUT_BIN_LOADER  3                 // 3 sec
+#define DEBUG false
 
 #if BOARD == BASIC
   #define LED_PIN 15
@@ -35,11 +36,10 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "0.0.5"
+#define VERSION "0.0.6"
 #define AUTHOR "F4HWN"
 #define NAME "IC705MultiMeter"
 
-#define DEBUG true
 #define FASTLED_INTERNAL // To disable pragma messages on compile
 #define STEP 2
 
@@ -71,9 +71,37 @@ uint8_t htmlGetRefresh = 3;
 uint8_t option = 2;
 uint8_t brightness = 64;
 uint16_t bande = 28;
-boolean reset = true;
+uint32_t screensaver;
+boolean screensaverMode = 0;
 boolean btConnected = false;
 boolean needClear = true;
+
+uint8_t sOld = 255;
+uint8_t SWROld = 255;
+uint8_t powerOld = 255;
+uint8_t IdOld = 255;
+uint8_t COMPLOld = 255;
+uint8_t ALCOld = 127;
+uint8_t TXOld = 127;
+uint8_t agcOld = 127;
+uint8_t ANOld = 127;
+uint8_t NBOld = 127;
+uint8_t NROld = 127;
+uint8_t AMPOld = 127;
+uint8_t toneOld = 127;
+uint8_t AFOld = 127;
+uint8_t MICOld = 127;
+uint8_t SQLOld = 127;
+uint8_t COMPOld = 127;
+uint8_t VdOld = 0;
+uint8_t batteryLevelOld = 0;
+
+String frequencyOld = "";
+String filterOld = "";
+String modeOld = "";
+String RITOld = "";
+
+boolean batteryCharginglOld = true;
 
 // LED
 #define NUM_LEDS 10
