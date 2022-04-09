@@ -7,6 +7,7 @@
 // IC705 Bluetooth 
 #define IC705_CI_V_ADDRESS 0xA4                 // IC705 CI-V default address 0xA4
 
+// Wifi Config
 #define WIFI_SSID       "YOUR WIFI SSID"        // Your WiFi SSID
 #define WIFI_PASSWORD   "YOUR WIFI PASSWORD"    // Your WiFi Password
 
