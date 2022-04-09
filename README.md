@@ -106,6 +106,16 @@ Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC7
 
 > Beware: it's slow! And there is no automatic refresh. You have to click on the background of the screen image to make a new capture. And otherwise, as said, the buttons are functional.
 
+#### TFT image retention
+
+To avoid TFT image retention (also called _Burn In_), there is a kind of screen saver. If there is no action on the buttons or PTT, after a delay of 60 minutes, the screen will show the Icom logo. 
+
+You can change the delay, line 14. 
+
+If the screen saver is active and you press a button or the PTT to transmit, the IC705MultiMeter screen will come back.
+
+Note that if the connection between your M5Stack and the IC705 has been established and you turn off your IC705 or disconnect the Bluetooth link, the screen will go completely into _sleep mode_. The IC705MultiMeter screen will come back as soon as the Bluetooth link is established again.  
+
 ### File `platformio.ini`
 
 If and only if __you are using the M5Stack Core2__, edit the `platformio.ini` file and modify the lines,
