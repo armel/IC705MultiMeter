@@ -614,6 +614,7 @@ void clearGUI()
   M5.Lcd.drawString("dB", 204, 174);
 }
 
+// Clear Data
 void clearData() 
 {
   sOld = 255;
