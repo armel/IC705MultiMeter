@@ -8,7 +8,7 @@
 #define CORE2 3
 
 #define TIMEOUT_BIN_LOADER  3                 // 3 sec
-#define DEBUG true
+#define DEBUG false
 
 #if BOARD == BASIC
   #define LED_PIN 15
