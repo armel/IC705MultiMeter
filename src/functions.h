@@ -355,7 +355,9 @@ void sendCommandWifi(char *request, size_t n, char *buffer, uint8_t limit)
     command += String(s);
   }
 
-  http.begin(civClient, PROXY_URL + String("?civ=") + command); // Specify the URL
+  command += BAUDE_RATE + String(",") + SERIAL_DEVICE;
+
+  http.begin(civClient, PROXY_URL + String(":") + PROXY_PORT + String("/") + String("?civ=") + command); // Specify the URL
   http.addHeader("User-Agent", "M5Stack");                                       // Specify header
   http.addHeader("Connection", "keep-alive");                                    // Specify header
   http.setTimeout(100);                                                          // Set Time Out

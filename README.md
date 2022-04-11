@@ -107,21 +107,28 @@ Line 11, change the CI-V address of your Transceiver if necessary. I have indica
 
 #### Wifi Configuration 
 
-Line 14 and 15, indicate your SSID and your Wifi password. If you're a using an IC7300 or IC9700, __it's necessary__ !
+If you're a using an IC7300 or IC9700, __it's necessary__ !
+
+Line 14 and 15, indicate your SSID and your Wifi password.
 
 In complement, you can view your IC705MultiMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705MultiMeter in your browser, just go to `http://ip_address_of_your_ic705multimeter/`. As a reminder, the IP address that your IC705MultiMeter retrieves is displayed on the screen.
 
 > Beware: it's slow! And there is no automatic refresh. You have to click on the background of the screen image to make a new capture. And otherwise, as said, the buttons are functional.
 
-#### URL Proxy
+#### Proxy Configuration
 
-Line 18, indicate the URL (and port) of the Proxy. If you're a using an IC7300 or IC9700, __it's necessary__ !
+If you're a using an IC7300 or IC9700, __it's necessary__ !
+
+Line 18 and 19, indicate the CI-V COM port settings. So COM port number (COM1, /dev/ttyUSB0, etc.) and Baude rate.
+Line 20 and 21, indicate the URL and port of the Proxy.
+
+> About Proxy, the idea is to use a PC or a nano computer (like a Raspberry Pi) to connect the IC7300 or IC9700 transceiver via the USB cable (USB type A to USB type B). The M5Stack will talk to this PC by Wifi and the PC will talk to the transceiver by the USB cable. By this way, the M5Stack keeps the big advantage of being wireless.
 
 #### TFT image retention
 
 To avoid TFT image retention (also called _Burn In_), there is a kind of screen saver. If there is no action on the buttons or PTT, after a delay of 60 minutes, the screen will show the Icom logo. 
 
-You can change the delay, line 21. 
+You can change the delay, line 25. 
 
 If the screen saver is active and you press a button or the PTT to transmit, the IC705MultiMeter screen will come back.
 
