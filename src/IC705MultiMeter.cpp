@@ -67,15 +67,22 @@ void setup()
 
   viewGUI();
 
-  CAT.register_callback(callbackBT);
-
-  if (!CAT.begin(NAME))
+  if(IC_MODEL == 705) 
   {
-    Serial.println("An error occurred initializing Bluetooth");
+    CAT.register_callback(callbackBT);
+
+    if (!CAT.begin(NAME))
+    {
+      Serial.println("An error occurred initializing Bluetooth");
+    }
+    else
+    {
+      Serial.println("Bluetooth initialized");
+    }
   }
   else
   {
-    Serial.println("Bluetooth initialized");
+    if (WiFi.status() == WL_CONNECTED) wifiConnected = true;
   }
 
   // Multitasking task for retreive button
@@ -111,18 +118,21 @@ void loop()
   static uint8_t charge = 0;
   static uint8_t comp = 0;
   
-  if (btConnected == false)
+  if ((IC_MODEL == 705 && btConnected == false) || (IC_MODEL != 705 && wifiConnected == false))
   {
     if(screensaverMode == 0) {
       M5.Lcd.setTextDatum(CC_DATUM);
       M5.Lcd.setFreeFont(&UniversCondensed20pt7b);
       M5.Lcd.setTextPadding(200);
       M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-      M5.Lcd.drawString("Need Pairing", 160, 70);
+      if(IC_MODEL == 705) 
+        M5.Lcd.drawString("Need Pairing", 160, 70);
+      else
+        M5.Lcd.drawString("Need Wifi", 160, 70);
       vTaskDelay(500);
       M5.Lcd.drawString("", 160, 70);
       vTaskDelay(100);
-      Serial.println("Need Pairing");
+      Serial.println("No TX communication");
     }
   }
   else {
@@ -138,10 +148,12 @@ void loop()
         M5.Lcd.setTextDatum(CR_DATUM);
         M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
 
-        if(charge == 0) {
+        if( IC_MODEL == 705 && charge == 0) 
+        {
           M5.Lcd.drawString("(10W)", 194, 138);
         }
-        else {
+        else if(IC_MODEL == 705 && charge == 1)
+        {
           M5.Lcd.drawString("(5W)", 194, 138);
         }
       }  
@@ -216,7 +228,7 @@ void loop()
           getMIC();
           break;
       }
-
+    
       if(tx == 0) {
         getSmeterLevel();
       }
@@ -247,5 +259,8 @@ void loop()
   if (WiFi.status() == WL_CONNECTED)
   {
     getScreenshot();
+  }
+  else {
+    wifiConnected = false;
   }
 }

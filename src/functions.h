@@ -293,8 +293,8 @@ void viewBaseline()
   }
 }
 
-// Send CI-V Command
-void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
+// Send CI-V Command by Bluetooth
+void sendCommandBt(char *request, size_t n, char *buffer, uint8_t limit)
 {
   uint8_t byte1, byte2, byte3;
   uint8_t counter = 0;
@@ -334,6 +334,72 @@ void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
     }
   }
   // Serial.println(" Ok");
+}
+
+// Send CI-V Command by Wifi
+void sendCommandWifi(char *request, size_t n, char *buffer, uint8_t limit)
+{
+  uint8_t byte1, byte2, byte3;
+  uint8_t counter = 0;
+
+  HTTPClient http;
+  uint16_t httpCode;
+
+  String command = "";
+  String response = "";
+
+  char s[4];
+  for (uint8_t i = 0; i < n; i++)
+  {
+    sprintf(s, "%02x,", request[i]);
+    command += String(s);
+  }
+
+  http.begin(civClient, IC_URL + String("?civ=") + command); // Specify the URL
+  http.addHeader("User-Agent", "M5Stack");                                       // Specify header
+  http.addHeader("Connection", "keep-alive");                                    // Specify header
+  http.setTimeout(100);                                                          // Set Time Out
+  httpCode = http.GET();                                                         // Make the request
+  while(httpCode != 200)
+  {
+    vTaskDelay(50);
+    httpCode = http.GET();                                                       // Make the request
+  }
+
+  response = http.getString(); // Get data
+  response.trim();
+  response = response.substring(4);
+
+  for (uint8_t i = 0; i < limit; i++)
+  {
+    buffer[i] = strtol(response.substring(i * 2, (i * 2) + 2).c_str(), NULL, 16);
+  }
+  
+  if(DEBUG) {
+    Serial.println("-----");
+    Serial.print(response);
+    Serial.print(" ");
+    Serial.println(response.length());
+
+    for (uint8_t i = 0; i < limit; i++)
+    {
+      Serial.print(int(buffer[i]));
+      Serial.print(" ");
+    }
+    Serial.println(" ");
+    Serial.println("-----");
+  }
+
+  http.end(); // Free the resources
+}
+
+// Send CI-V Command dispatcher
+void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
+{
+  if(IC_MODEL == 705)
+    sendCommandBt(request, n, buffer, limit);
+  else
+    sendCommandWifi(request, n, buffer, limit);
 }
 
 // View GUI
@@ -926,7 +992,10 @@ void wakeAndSleep()
     }
 
     M5.Lcd.drawJpg(logo, sizeof(logo), x, y, 44, 22);
-    if(!btConnected) vTaskDelay(75);
+    if(IC_MODEL == 705 && btConnected == false)
+      vTaskDelay(75);
+    else if(IC_MODEL != 705 && wifiConnected == false)
+      vTaskDelay(75);
   }
 
   if(DEBUG) {

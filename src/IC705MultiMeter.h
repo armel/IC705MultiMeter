@@ -36,7 +36,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "0.0.6"
+#define VERSION "0.0.7"
 #define AUTHOR "F4HWN"
 #define NAME "IC705MultiMeter"
 
@@ -65,7 +65,7 @@ int16_t pos = 0;
 
 // Global Variables
 WiFiServer httpServer(80);
-WiFiClient httpClient;
+WiFiClient httpClient, civClient;
 uint8_t htmlGetRequest;
 uint8_t htmlGetRefresh = 3;
 uint8_t option = 2;
@@ -74,6 +74,7 @@ uint16_t bande = 28;
 uint32_t screensaver;
 boolean screensaverMode = 0;
 boolean btConnected = false;
+boolean wifiConnected = false;
 boolean needClear = true;
 
 uint8_t sOld = 255;
