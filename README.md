@@ -95,22 +95,33 @@ Line 5, check that the constant `BOARD` corresponds to your M5Stack model (by de
 ```
 #define BOARD CORE2
 ```
+#### IC Transceiver Model
 
-#### Bluetooth Address of your IC705
+Line 8, choose your IC Transceiver model : 705, 7300 or 9700.
 
-Line 8, change the address of your IC705 if necessary. I have indicated the default value. Refer to the documentation, if needed.
+> I don't own the 9700, so I haven't tested it.
+
+#### CI-V Address of your Transceiver
+
+Line 11, change the CI-V address of your Transceiver if necessary. I have indicated the default value. Refer to the documentation, if needed.
 
 #### Wifi Configuration 
 
-Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC705MultiMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705MultiMeter in your browser, just go to `http://ip_address_of_your_ic705multimeter/`. As a reminder, the IP address that your IC705MultiMeter retrieves is displayed on the screen.
+Line 14 and 15, indicate your SSID and your Wifi password. If you're a using an IC7300 or IC9700, __it's necessary__ !
+
+In complement, you can view your IC705MultiMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705MultiMeter in your browser, just go to `http://ip_address_of_your_ic705multimeter/`. As a reminder, the IP address that your IC705MultiMeter retrieves is displayed on the screen.
 
 > Beware: it's slow! And there is no automatic refresh. You have to click on the background of the screen image to make a new capture. And otherwise, as said, the buttons are functional.
+
+#### URL Proxy
+
+Line 18, indicate the URL (and port) of the Proxy. If you're a using an IC7300 or IC9700, __it's necessary__ !
 
 #### TFT image retention
 
 To avoid TFT image retention (also called _Burn In_), there is a kind of screen saver. If there is no action on the buttons or PTT, after a delay of 60 minutes, the screen will show the Icom logo. 
 
-You can change the delay, line 14. 
+You can change the delay, line 21. 
 
 If the screen saver is active and you press a button or the PTT to transmit, the IC705MultiMeter screen will come back.
 

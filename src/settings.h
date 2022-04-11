@@ -4,12 +4,18 @@
 // M5Stack Board
 #define BOARD BASIC                             // Your M5Stack Board
 
-// IC705 Bluetooth 
-#define IC705_CI_V_ADDRESS 0xA4                 // IC705 CI-V default address 0xA4
+// IC Transceiver Model
+#define IC_MODEL 705                            // 705, 7300 (and may be 9700)
+
+// CI_V Address 
+#define CI_V_ADDRESS 0xA4                       // CI-V default address 0xA4
 
 // Wifi Config
 #define WIFI_SSID       "YOUR WIFI SSID"        // Your WiFi SSID
 #define WIFI_PASSWORD   "YOUR WIFI PASSWORD"    // Your WiFi Password
+
+// URL Proxy
+#define PROXY_URL "http://192.168.1.1:1234/"    // URL for Wifi
 
 // Screen Saver Time Out
 #define TIMEOUT_SCREENSAVER 60 * 60 * 1000      // 60 min default timeout (in milli seconds)
