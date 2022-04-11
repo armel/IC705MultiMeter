@@ -14,8 +14,12 @@
 #define WIFI_SSID       "YOUR WIFI SSID"        // Your WiFi SSID
 #define WIFI_PASSWORD   "YOUR WIFI PASSWORD"    // Your WiFi Password
 
-// URL Proxy
-#define PROXY_URL "http://192.168.1.1:1234/"    // URL for Wifi
+// Proxy Config
+#define SERIAL_DEVICE "/dev/ttyUSB0"            // Proxy Serial Device
+#define BAUDE_RATE 115900                       // Proxy Serial Device Baude Rate
+#define PROXY_URL "http://192.168.1.1"          // Proxy URL
+#define PROXY_PORT "1234"                       // Proxy Port
+
 
 // Screen Saver Time Out
 #define TIMEOUT_SCREENSAVER 60 * 60 * 1000      // 60 min default timeout (in milli seconds)
