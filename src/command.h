@@ -8,7 +8,7 @@ void getSmeterLevel()
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x15, 0x02, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -67,7 +67,7 @@ void getSWRLevel()
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x15, 0x12, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -139,7 +139,7 @@ void getPowerLevel(uint8_t charge = 0)
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x15, 0x11, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -213,7 +213,7 @@ void getPowerLevel(uint8_t charge = 0)
 // Get Power Type
 uint8_t getPowerType()
 {
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x1A, 0x0B, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -226,7 +226,7 @@ uint8_t getPowerType()
 // Get Frequency
 void getFrequency()
 {
-  char buffer[8];
+  static char buffer[8];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x03, 0xFD};
 
   String frequency;
@@ -281,7 +281,7 @@ void getFrequency()
 // Get Data Mode
 uint8_t getModeData()
 {
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x1A, 0x06, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -296,7 +296,7 @@ uint8_t getModeFilter()
 {
   String value;
 
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x04, 0xFD};
 
   const char *mode[] = {"LSB", "USB", "AM", "CW", "RTTY", "FM", "WFM", "CW-R", "RTTY-R", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "DV"};
@@ -305,45 +305,52 @@ uint8_t getModeFilter()
 
   sendCommand(request, n, buffer, 5);
 
-  M5.Lcd.setFreeFont(&tahoma8pt7b);
-  M5.Lcd.setTextPadding(24);
-  M5.Lcd.setTextColor(TFT_WHITE);
-  M5.Lcd.setTextDatum(CC_DATUM);
-
-  value = "FIL" + String(uint8_t(buffer[4]));
-
-  if (value != filterOld)
+  if(uint8_t(buffer[4]) >= 1 && uint8_t(buffer[4]) <= 3)
   {
-    filterOld = value;
-    M5.Lcd.fillRoundRect(70, 24, 44, 18, 2, TFT_FIL_BACK);
-    M5.Lcd.drawRoundRect(70, 24, 44, 18, 2, TFT_FIL_BORDER);
-    M5.Lcd.drawString(value, 92, 32);
+    M5.Lcd.setFreeFont(&tahoma8pt7b);
+    M5.Lcd.setTextPadding(24);
+    M5.Lcd.setTextColor(TFT_WHITE);
+    M5.Lcd.setTextDatum(CC_DATUM);
+
+    value = "FIL" + String(uint8_t(buffer[4]));
+
+    if (value != filterOld)
+    {
+      filterOld = value;
+      M5.Lcd.fillRoundRect(70, 24, 44, 18, 2, TFT_FIL_BACK);
+      M5.Lcd.drawRoundRect(70, 24, 44, 18, 2, TFT_FIL_BORDER);
+      M5.Lcd.drawString(value, 92, 32);
+    }
+
+    if(DEBUG) {
+      Serial.print("FIL ");
+      Serial.println(value);
+    }
   }
 
-  if(DEBUG) {
-    Serial.print("FIL ");
-    Serial.println(value);
-  }
-
-  value = String(mode[(uint8_t)buffer[3]]);
-
-  if (getModeData() == 1)
+  if(uint8_t(buffer[4]) >= 0 && uint8_t(buffer[4]) <= 23)
   {
-    value += "-D";
-  }
-  if (value != modeOld)
-  {
-    modeOld = value;
-    M5.Lcd.fillRoundRect(2, 24, 60, 18, 2, TFT_MODE_BACK);
-    M5.Lcd.drawRoundRect(2, 24, 60, 18, 2, TFT_MODE_BORDER);
-    M5.Lcd.drawString(value, 31, 32);
-  }
 
-  if(DEBUG) {
-    Serial.print("Mode ");
-    Serial.println(value);
-  }
+    value = String(mode[(uint8_t)buffer[3]]);
 
+    if (getModeData() == 1)
+    {
+      value += "-D";
+    }
+    if (value != modeOld)
+    {
+      modeOld = value;
+      M5.Lcd.fillRoundRect(2, 24, 60, 18, 2, TFT_MODE_BACK);
+      M5.Lcd.drawRoundRect(2, 24, 60, 18, 2, TFT_MODE_BORDER);
+      M5.Lcd.drawString(value, 31, 32);
+    }
+
+    if(DEBUG) {
+      Serial.print("Mode ");
+      Serial.println(value);
+    }
+  }
+  
   return uint8_t(buffer[3]);
 }
 
@@ -354,7 +361,7 @@ void getVdLevel()
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x15, 0x15, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -399,7 +406,7 @@ void getIdLevel()
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x15, 0x16, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -451,7 +458,7 @@ void getALCLevel()
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x15, 0x13, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -498,7 +505,7 @@ uint8_t getTX()
   uint8_t value;
   boolean control;
 
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x1C, 0x00, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -514,10 +521,12 @@ uint8_t getTX()
     value = 0;
   }
 
-  if (IC_MODEL == 705 && btConnected == true)
+  if (IC_MODEL == 705 && IC_CONNECT == BT && btConnected == true)
     control = true;
-  else if (IC_MODEL != 705 && wifiConnected == true)
+  else if (IC_CONNECT == USB && wifiConnected == true && proxyConnected == true)
     control = true;
+  else
+    control = false;
 
   if (value != TXOld && control)
   {
@@ -551,7 +560,7 @@ void getAGC()
 {
   uint8_t value;
 
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x16, 0x12, 0xFD};
 
   const char *mode[] = {"", "AGC-F", "AGC-M", "AGC-S"};
@@ -591,7 +600,7 @@ void getAN()
 {
   uint8_t value;
 
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x16, 0x41, 0xFD};
 
   const char *mode[] = {"  ", "AN"};
@@ -631,7 +640,7 @@ void getNB()
 {
   uint8_t value;
 
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x16, 0x22, 0xFD};
 
   const char *mode[] = {"  ", "NB"};
@@ -671,7 +680,7 @@ void getNR()
 {
   uint8_t value;
 
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x16, 0x40, 0xFD};
 
   const char *mode[] = {"  ", "NR"};
@@ -711,7 +720,7 @@ void getAMP()
 {
   uint8_t value;
 
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x16, 0x02, 0xFD};
 
   const char *mode[] = {"  ", "P.AMP1", "P.AMP2"};
@@ -756,7 +765,7 @@ void getTone(boolean retry = true)
 {
   uint8_t value;
 
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x16, 0x5D, 0xFD};
 
   const char *mode[] = {" ", "TONE", "TSQL", "DTCS", "", "", "DTCS (T)", "TONE (T)/DTCS (R)", "DTCS (T)/TSQL (R)", "TONE (T)/TSQL (R)"};
@@ -803,7 +812,7 @@ uint8_t getAF()
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x14, 0x01, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -852,7 +861,7 @@ uint8_t getMIC()
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x14, 0x0B, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -901,7 +910,7 @@ uint8_t getSQL()
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x14, 0x03, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -948,7 +957,7 @@ uint8_t getCOMP(boolean retry = true)
 {
   uint8_t value;
 
-  char buffer[5];
+  static char buffer[5];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x16, 0x44, 0xFD};
 
   const char *mode[] = {" ", "COMP"};
@@ -996,7 +1005,7 @@ void getCOMPLevel()
   uint8_t limit;
 
   char str[2];
-  char buffer[6];
+  static char buffer[6];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x15, 0x14, 0xFD};
 
   size_t n = sizeof(request) / sizeof(request[0]);
@@ -1050,7 +1059,7 @@ void getCOMPLevel()
 // Get RIT
 void getRIT()
 {
-  char buffer[8];
+  static char buffer[8];
   char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x21, 0x00, 0xFD};
 
   String RIT;

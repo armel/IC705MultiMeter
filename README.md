@@ -97,19 +97,29 @@ Line 5, check that the constant `BOARD` corresponds to your M5Stack model (by de
 ```
 #### IC Transceiver Model
 
-Line 8, choose your IC Transceiver model : 705, 7300 or 9700.
+Line 8, the constant `IC_MODEL` set your Transceiver model.
+Choose between : 705, 7300 or 9700.
 
 > I don't own the 9700, so I haven't tested it.
 
+#### IC Connect method
+
+If you're a using an IC7300 or IC9700, choose __USB__ !
+
+Line 11, the constant `IC_CONNECT` set your connect method.
+Choose between : BT or USB
+
+> Note that BT only works with IC705.
+
 #### CI-V Address of your Transceiver
 
-Line 11, change the CI-V address of your Transceiver if necessary. I have indicated the default value. Refer to the documentation, if needed.
+Line 14, the constant `CI_V_ADDRESS` set the CI-V Address of your Transceiver. I have indicated the default value. Refer to the documentation, if needed.
 
 #### Wifi Configuration 
 
 If you're a using an IC7300 or IC9700, __it's necessary__ !
 
-Line 14 and 15, indicate your SSID and your Wifi password.
+Line 17 and 18, the constants `WIFI_SSID` and `WIFI_PASSWORD` set your Wifi configuration.
 
 In complement, you can view your IC705MultiMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705MultiMeter in your browser, just go to `http://ip_address_of_your_ic705multimeter/`. As a reminder, the IP address that your IC705MultiMeter retrieves is displayed on the screen.
 
@@ -119,8 +129,8 @@ In complement, you can view your IC705MultiMeter from a simple browser. It is ev
 
 If you're a using an IC7300 or IC9700, __it's necessary__ !
 
-Line 18 and 19, indicate the CI-V COM port settings. So COM port number (COM1, /dev/ttyUSB0, etc.) and Baude rate.
-Line 20 and 21, indicate the URL and port of the Proxy.
+Line 21 and 22, the constants `SERIAL_DEVICE` and `BAUDE_RATE` set the CI-V COM port settings. So COM port number (COM1, /dev/ttyUSB0, etc.) and Baude rate (115900, 19200, 9600, etc.).
+Line 23 and 24, the constants `PROXY_URL` and `PROXY_PORT` set the URL and port of the Proxy.
 
 > About Proxy, the idea is to use a PC or a nano computer (like a Raspberry Pi) to connect the IC7300 or IC9700 transceiver via the USB cable (USB type A to USB type B). The M5Stack will talk to this PC by Wifi and the PC will talk to the transceiver by the USB cable. By this way, the M5Stack keeps the big advantage of being wireless.
 
@@ -128,7 +138,7 @@ Line 20 and 21, indicate the URL and port of the Proxy.
 
 To avoid TFT image retention (also called _Burn In_), there is a kind of screen saver. If there is no action on the buttons or PTT, after a delay of 60 minutes, the screen will show the Icom logo. 
 
-You can change the delay, line 25. 
+You can change the constant `TIMEOUT_SCREENSAVER` to set the delay, line 27. 
 
 If the screen saver is active and you press a button or the PTT to transmit, the IC705MultiMeter screen will come back.
 

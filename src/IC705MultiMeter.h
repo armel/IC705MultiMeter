@@ -7,6 +7,9 @@
 #define GREY 2
 #define CORE2 3
 
+#define BT 1
+#define USB 2
+
 #define TIMEOUT_BIN_LOADER  3                 // 3 sec
 #define DEBUG false
 
@@ -75,6 +78,7 @@ uint32_t screensaver;
 boolean screensaverMode = 0;
 boolean btConnected = false;
 boolean wifiConnected = false;
+boolean proxyConnected = false;
 boolean needClear = true;
 
 uint8_t sOld = 255;

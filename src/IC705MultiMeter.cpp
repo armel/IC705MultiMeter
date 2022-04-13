@@ -36,7 +36,10 @@ void setup()
   binLoader();
 
   // Wifi
+  WiFi.onEvent(callbackWifiOn, SYSTEM_EVENT_STA_CONNECTED);
+  WiFi.onEvent(callbackWifiOff, SYSTEM_EVENT_STA_DISCONNECTED);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
   while (WiFi.status() != WL_CONNECTED && loop <= 10)
   {
     delay(250);
@@ -67,7 +70,7 @@ void setup()
 
   viewGUI();
 
-  if(IC_MODEL == 705) 
+  if(IC_MODEL == 705 && IC_CONNECT == BT)
   {
     CAT.register_callback(callbackBT);
 
@@ -118,24 +121,7 @@ void loop()
   static uint8_t charge = 0;
   static uint8_t comp = 0;
   
-  if ((IC_MODEL == 705 && btConnected == false) || (IC_MODEL != 705 && wifiConnected == false))
-  {
-    if(screensaverMode == 0) {
-      M5.Lcd.setTextDatum(CC_DATUM);
-      M5.Lcd.setFreeFont(&UniversCondensed20pt7b);
-      M5.Lcd.setTextPadding(200);
-      M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-      if(IC_MODEL == 705) 
-        M5.Lcd.drawString("Need Pairing", 160, 70);
-      else
-        M5.Lcd.drawString("Need Wifi", 160, 70);
-      vTaskDelay(500);
-      M5.Lcd.drawString("", 160, 70);
-      vTaskDelay(100);
-      Serial.println("No TX communication");
-    }
-  }
-  else {
+  if(checkConnection()) {
     tx = getTX();
     if(tx != 0) screensaver = millis();   // If transmit, refresh tempo
 

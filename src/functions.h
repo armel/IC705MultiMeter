@@ -8,15 +8,34 @@ void callbackBT(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
   {
     screensaver = millis();
     M5.Lcd.wakeup();
-    Serial.println("Client Connected");
+    Serial.println("BT Client Connected");
+    frequencyOld = "";
     btConnected = true;
   }
   if (event == ESP_SPP_CLOSE_EVT)
   {
     M5.Lcd.sleep();
-    Serial.println("Client disconnected");
+    Serial.println("BT Client disconnected");
     btConnected = false;
   }
+}
+
+// Wifi callback Off
+void callbackWifiOff(WiFiEvent_t event, WiFiEventInfo_t info){
+  M5.Lcd.sleep();
+  Serial.println("Wifi Client disconnected");
+  wifiConnected = false;
+
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+}
+
+// Wifi callback On
+void callbackWifiOn(WiFiEvent_t event, WiFiEventInfo_t info){
+    screensaver = millis();
+    M5.Lcd.wakeup();
+    Serial.println("Wifi Client Connected");
+    frequencyOld = "";
+    wifiConnected = true;
 }
 
 // List files on SPIFFS or SD
@@ -339,6 +358,7 @@ void sendCommandBt(char *request, size_t n, char *buffer, uint8_t limit)
 // Send CI-V Command by Wifi
 void sendCommandWifi(char *request, size_t n, char *buffer, uint8_t limit)
 {
+  static uint8_t proxy = 0;
   uint8_t byte1, byte2, byte3;
   uint8_t counter = 0;
 
@@ -362,43 +382,48 @@ void sendCommandWifi(char *request, size_t n, char *buffer, uint8_t limit)
   http.addHeader("Connection", "keep-alive");                                    // Specify header
   http.setTimeout(100);                                                          // Set Time Out
   httpCode = http.GET();                                                         // Make the request
-  while(httpCode != 200)
+  if(httpCode == 200)
   {
-    vTaskDelay(50);
-    httpCode = http.GET();                                                       // Make the request
-  }
-
-  response = http.getString(); // Get data
-  response.trim();
-  response = response.substring(4);
-
-  for (uint8_t i = 0; i < limit; i++)
-  {
-    buffer[i] = strtol(response.substring(i * 2, (i * 2) + 2).c_str(), NULL, 16);
-  }
-  
-  if(DEBUG) {
-    Serial.println("-----");
-    Serial.print(response);
-    Serial.print(" ");
-    Serial.println(response.length());
+    response = http.getString(); // Get data
+    response.trim();
+    response = response.substring(4);
 
     for (uint8_t i = 0; i < limit; i++)
     {
-      Serial.print(int(buffer[i]));
-      Serial.print(" ");
+      buffer[i] = strtol(response.substring(i * 2, (i * 2) + 2).c_str(), NULL, 16);
     }
-    Serial.println(" ");
-    Serial.println("-----");
-  }
+    
+    if(DEBUG) {
+      Serial.println("-----");
+      Serial.print(response);
+      Serial.print(" ");
+      Serial.println(response.length());
 
+      for (uint8_t i = 0; i < limit; i++)
+      {
+        Serial.print(int(buffer[i]));
+        Serial.print(" ");
+      }
+      Serial.println(" ");
+      Serial.println("-----");
+    }
+    proxy = 0;
+    proxyConnected = true;
+  }
+  else {
+    proxy++;
+    if(proxy > 10) {
+      proxy = 10;
+      proxyConnected = false;
+    }
+  }
   http.end(); // Free the resources
 }
 
 // Send CI-V Command dispatcher
 void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
 {
-  if(IC_MODEL == 705)
+  if(IC_MODEL == 705 && IC_CONNECT == BT)
     sendCommandBt(request, n, buffer, limit);
   else
     sendCommandWifi(request, n, buffer, limit);
@@ -407,12 +432,29 @@ void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
 // View GUI
 void viewGUI()
 {
+  // IC Connect 
+  M5.Lcd.setFreeFont(0);
+  M5.Lcd.setTextDatum(CC_DATUM);
+
+  M5.Lcd.fillRoundRect(283, 90, 34, 20, 2, TFT_MODE_BACK);
+  M5.Lcd.drawRoundRect(283, 90, 34, 20, 2, TFT_MODE_BORDER);
+  M5.Lcd.setTextColor(TFT_WHITE);
+
+  if(IC_CONNECT == BT)
+    M5.Lcd.drawString("BT", 300, 96);
+  else
+    M5.Lcd.drawString("USB", 300, 96);
+
+  M5.Lcd.drawString(String(IC_MODEL), 300, 105);
+
+
   //M5.Lcd.drawFastHLine(0, 57, 320, TFT_FIL_BORDER);
   //M5.Lcd.drawFastHLine(0, 86, 320, TFT_FIL_BORDER);
 
   //M5.Lcd.drawJpg(logo, sizeof(logo), 272, 0, 44, 22);
   //M5.Lcd.drawJpg(logo, sizeof(logo), 40, 0, 44, 22);
   //M5.Lcd.drawJpg(logo, sizeof(logo), 272, 94, 44, 22);
+
   M5.Lcd.drawJpg(logo, sizeof(logo), 0, 49, 44, 22);
 
   M5.Lcd.setFreeFont(0);
@@ -994,9 +1036,10 @@ void wakeAndSleep()
     }
 
     M5.Lcd.drawJpg(logo, sizeof(logo), x, y, 44, 22);
-    if(IC_MODEL == 705 && btConnected == false)
+
+    if(IC_MODEL == 705 && IC_CONNECT == BT && btConnected == false)
       vTaskDelay(75);
-    else if(IC_MODEL != 705 && wifiConnected == false)
+    else if(IC_CONNECT == USB && wifiConnected == false)
       vTaskDelay(75);
   }
 
@@ -1005,4 +1048,52 @@ void wakeAndSleep()
     Serial.print(" ");
     Serial.println(millis() - screensaver);
   }
+}
+
+// Manage connexion error
+boolean checkConnection()
+{
+  HTTPClient http;
+  uint16_t httpCode;
+  String message = "";
+  String command = "";
+
+  if(screensaverMode == 0) {
+    if (IC_MODEL == 705 && IC_CONNECT == BT && btConnected == false)
+      message = "Check Pairing";
+    else if (IC_CONNECT == USB && wifiConnected == false)
+      message = "Check Wifi";
+    else if (IC_CONNECT == USB && proxyConnected == false) 
+    {
+      message = "Check Proxy";
+
+      command = BAUDE_RATE + String(",") + SERIAL_DEVICE;
+
+      http.begin(civClient, PROXY_URL + String(":") + PROXY_PORT + String("/") + String("?civ=") + command); // Specify the URL
+      http.addHeader("User-Agent", "M5Stack");                                       // Specify header
+      http.addHeader("Connection", "keep-alive");                                    // Specify header
+      http.setTimeout(100);                                                          // Set Time Out
+      httpCode = http.GET();                                                         // Make the request
+      if(httpCode == 200) {
+        proxyConnected = true;
+        frequencyOld = "";
+      }
+    }
+    if(message != "")
+    {
+      M5.Lcd.setTextDatum(CC_DATUM);
+      M5.Lcd.setFreeFont(&UniversCondensed20pt7b);
+      M5.Lcd.setTextPadding(200);
+      M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+      M5.Lcd.drawString(message, 160, 70);
+      vTaskDelay(500);
+      M5.Lcd.drawString("", 160, 70);
+      vTaskDelay(100);
+      Serial.println("No TX communication");
+
+      return false;
+    }
+  }
+
+  return true;
 }
