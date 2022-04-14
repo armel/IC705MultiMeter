@@ -260,7 +260,12 @@ void getFrequency()
   frequency = val2 + "." + val1 + "." + val0;
   bande = val2.toInt();
 
-  if (frequency != frequencyOld)
+  if(frequency == "" || frequency == "0.." || frequency == "163.163.163")
+    txConnected = false;
+  else
+    txConnected = true;
+
+  if (frequency != frequencyOld && txConnected == true)
   {
     frequencyOld = frequency;
 
@@ -305,13 +310,13 @@ uint8_t getModeFilter()
 
   sendCommand(request, n, buffer, 5);
 
+  M5.Lcd.setFreeFont(&tahoma8pt7b);
+  M5.Lcd.setTextPadding(24);
+  M5.Lcd.setTextColor(TFT_WHITE);
+  M5.Lcd.setTextDatum(CC_DATUM);
+
   if(uint8_t(buffer[4]) >= 1 && uint8_t(buffer[4]) <= 3)
   {
-    M5.Lcd.setFreeFont(&tahoma8pt7b);
-    M5.Lcd.setTextPadding(24);
-    M5.Lcd.setTextColor(TFT_WHITE);
-    M5.Lcd.setTextDatum(CC_DATUM);
-
     value = "FIL" + String(uint8_t(buffer[4]));
 
     if (value != filterOld)
@@ -350,7 +355,7 @@ uint8_t getModeFilter()
       Serial.println(value);
     }
   }
-  
+
   return uint8_t(buffer[3]);
 }
 
@@ -523,7 +528,7 @@ uint8_t getTX()
 
   if (IC_MODEL == 705 && IC_CONNECT == BT && btConnected == true)
     control = true;
-  else if (IC_CONNECT == USB && wifiConnected == true && proxyConnected == true)
+  else if (IC_CONNECT == USB && wifiConnected == true && proxyConnected == true && txConnected == true)
     control = true;
   else
     control = false;

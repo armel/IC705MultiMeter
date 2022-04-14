@@ -21,7 +21,8 @@ void callbackBT(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
 }
 
 // Wifi callback Off
-void callbackWifiOff(WiFiEvent_t event, WiFiEventInfo_t info){
+void callbackWifiOff(WiFiEvent_t event, WiFiEventInfo_t info)
+{
   M5.Lcd.sleep();
   Serial.println("Wifi Client disconnected");
   wifiConnected = false;
@@ -30,12 +31,13 @@ void callbackWifiOff(WiFiEvent_t event, WiFiEventInfo_t info){
 }
 
 // Wifi callback On
-void callbackWifiOn(WiFiEvent_t event, WiFiEventInfo_t info){
-    screensaver = millis();
-    M5.Lcd.wakeup();
-    Serial.println("Wifi Client Connected");
-    frequencyOld = "";
-    wifiConnected = true;
+void callbackWifiOn(WiFiEvent_t event, WiFiEventInfo_t info)
+{
+  screensaver = millis();
+  M5.Lcd.wakeup();
+  Serial.println("Wifi Client Connected");
+  frequencyOld = "";
+  wifiConnected = true;
 }
 
 // List files on SPIFFS or SD
@@ -51,8 +53,8 @@ void getBinaryList(File dir, String type)
     }
 
     if (strstr(entry.name(), "/.") == NULL && strstr(entry.name(), ".bin") != NULL)
-    { 
-      //Serial.println(type + "_" + entry.name());     
+    {
+      // Serial.println(type + "_" + entry.name());
       binFilename[binIndex] = type + "_" + entry.name();
       binIndex++;
     }
@@ -105,8 +107,8 @@ void binLoader()
   root = SPIFFS.open("/");
   getBinaryList(root, "SP");
 
-
-  if (SD.begin()) {
+  if (SD.begin())
+  {
     root = SD.open("/");
     getBinaryList(root, "SD");
   }
@@ -171,10 +173,12 @@ void binLoader()
     }
     else if (btnB)
     {
-      if(binFilename[cursor].substring(0, 4) == "SP_/") {
+      if (binFilename[cursor].substring(0, 4) == "SP_/")
+      {
         updateFromFS(SPIFFS, binFilename[cursor].substring(3));
       }
-      else {
+      else
+      {
         updateFromFS(SD, binFilename[cursor].substring(3));
       }
       ESP.restart();
@@ -186,7 +190,7 @@ void binLoader()
     start = cursor / limit;
 
     stop = (start * limit) + limit;
-    
+
     /*
     Serial.print(cursor);
     Serial.print("-");
@@ -210,11 +214,13 @@ void binLoader()
         {
           tmpName = ">> " + tmpName + " <<";
 
-          if(binFilename[cursor].substring(0, 4) == "SP_/") {
+          if (binFilename[cursor].substring(0, 4) == "SP_/")
+          {
             M5.Lcd.setTextSize(1);
             M5.Lcd.drawString("SPI Flash File Storage", 160, 50);
           }
-          else {
+          else
+          {
             M5.Lcd.setTextSize(1);
             M5.Lcd.drawString("SD Card Storage", 160, 50);
           }
@@ -231,33 +237,38 @@ void binLoader()
 }
 
 // Print battery
-void viewBattery() {
+void viewBattery()
+{
   uint8_t batteryLevel;
   boolean batteryCharging;
 
-  if(screensaverMode == 0) {
+  if (screensaverMode == 0)
+  {
     // On left, view battery level
     batteryLevel = map(getBatteryLevel(1), 0, 100, 0, 16);
     batteryCharging = isCharging();
 
-    if(batteryLevel != batteryLevelOld || batteryCharging != batteryCharginglOld) {
+    if (batteryLevel != batteryLevelOld || batteryCharging != batteryCharginglOld)
+    {
 
       batteryLevelOld = batteryLevel;
       batteryCharginglOld = batteryCharging;
-      
+
       M5.Lcd.drawRect(294, 4, 20, 12, TFT_WHITE);
       M5.Lcd.drawRect(313, 7, 4, 6, TFT_WHITE);
       M5.Lcd.fillRect(296, 6, 16, 8, TFT_BLACK);
       M5.Lcd.fillRect(296, 6, batteryLevel, 8, TFT_WHITE);
-        
-      if(batteryCharging) {
+
+      if (batteryCharging)
+      {
         M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
         M5.Lcd.setFreeFont(0);
         M5.Lcd.setTextDatum(CR_DATUM);
         M5.Lcd.setTextPadding(28);
         M5.Lcd.drawString("+", 290, 11);
       }
-      else {
+      else
+      {
         M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
         M5.Lcd.setFreeFont(0);
         M5.Lcd.setTextDatum(CR_DATUM);
@@ -273,8 +284,9 @@ void viewBaseline()
 {
   static uint8_t temporisation = 0;
 
-  if(screensaverMode == 0) {
-    if(btnL || btnR)
+  if (screensaverMode == 0)
+  {
+    if (btnL || btnR)
     {
       M5.Lcd.setTextDatum(CC_DATUM);
       M5.Lcd.setFreeFont(0);
@@ -282,7 +294,8 @@ void viewBaseline()
       M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BLACK);
       M5.Lcd.drawString("Brightness " + String(map(brightness, 1, 254, 1, 100)) + "%", 160, 100);
     }
-    else {
+    else
+    {
       temporisation = (temporisation++ < 40) ? temporisation : 0;
 
       if (temporisation > 36 && temporisation < 40 && WiFi.status() == WL_CONNECTED)
@@ -301,7 +314,8 @@ void viewBaseline()
         M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BLACK);
         M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 100);
       }
-      else {
+      else
+      {
         M5.Lcd.setTextDatum(CC_DATUM);
         M5.Lcd.setFreeFont(0);
         M5.Lcd.setTextPadding(200);
@@ -343,7 +357,8 @@ void sendCommandBt(char *request, size_t n, char *buffer, uint8_t limit)
           counter++;
           if (counter > limit)
           {
-            if(DEBUG) {
+            if (DEBUG)
+            {
               Serial.print(" Overflow");
             }
             break;
@@ -358,7 +373,7 @@ void sendCommandBt(char *request, size_t n, char *buffer, uint8_t limit)
 // Send CI-V Command by Wifi
 void sendCommandWifi(char *request, size_t n, char *buffer, uint8_t limit)
 {
-  static uint8_t proxy = 0;
+  static uint8_t proxyError = 0;
   uint8_t byte1, byte2, byte3;
   uint8_t counter = 0;
 
@@ -369,6 +384,7 @@ void sendCommandWifi(char *request, size_t n, char *buffer, uint8_t limit)
   String response = "";
 
   char s[4];
+
   for (uint8_t i = 0; i < n; i++)
   {
     sprintf(s, "%02x,", request[i]);
@@ -378,42 +394,56 @@ void sendCommandWifi(char *request, size_t n, char *buffer, uint8_t limit)
   command += BAUDE_RATE + String(",") + SERIAL_DEVICE;
 
   http.begin(civClient, PROXY_URL + String(":") + PROXY_PORT + String("/") + String("?civ=") + command); // Specify the URL
-  http.addHeader("User-Agent", "M5Stack");                                       // Specify header
-  http.addHeader("Connection", "keep-alive");                                    // Specify header
-  http.setTimeout(100);                                                          // Set Time Out
-  httpCode = http.GET();                                                         // Make the request
-  if(httpCode == 200)
+  http.addHeader("User-Agent", "M5Stack");                                                               // Specify header
+  http.addHeader("Connection", "keep-alive");                                                            // Specify header
+  http.setTimeout(100);                                                                                  // Set Time Out
+  httpCode = http.GET();                                                                                 // Make the request
+  if (httpCode == 200)
   {
+    proxyConnected = true;
+    proxyError = 0;
+
     response = http.getString(); // Get data
     response.trim();
     response = response.substring(4);
 
-    for (uint8_t i = 0; i < limit; i++)
+    if (response == "")
     {
-      buffer[i] = strtol(response.substring(i * 2, (i * 2) + 2).c_str(), NULL, 16);
+      txConnected = false;
     }
-    
-    if(DEBUG) {
-      Serial.println("-----");
-      Serial.print(response);
-      Serial.print(" ");
-      Serial.println(response.length());
+    else
+    {
+      txConnected = true;
+      startup = false;
 
       for (uint8_t i = 0; i < limit; i++)
       {
-        Serial.print(int(buffer[i]));
-        Serial.print(" ");
+        buffer[i] = strtol(response.substring(i * 2, (i * 2) + 2).c_str(), NULL, 16);
       }
-      Serial.println(" ");
-      Serial.println("-----");
+
+      if (DEBUG)
+      {
+        Serial.println("-----");
+        Serial.print(response);
+        Serial.print(" ");
+        Serial.println(response.length());
+
+        for (uint8_t i = 0; i < limit; i++)
+        {
+          Serial.print(int(buffer[i]));
+          Serial.print(" ");
+        }
+        Serial.println(" ");
+        Serial.println("-----");
+      }
     }
-    proxy = 0;
-    proxyConnected = true;
   }
-  else {
-    proxy++;
-    if(proxy > 10) {
-      proxy = 10;
+  else
+  {
+    proxyError++;
+    if (proxyError > 10)
+    {
+      proxyError = 10;
       proxyConnected = false;
     }
   }
@@ -423,7 +453,7 @@ void sendCommandWifi(char *request, size_t n, char *buffer, uint8_t limit)
 // Send CI-V Command dispatcher
 void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
 {
-  if(IC_MODEL == 705 && IC_CONNECT == BT)
+  if (IC_MODEL == 705 && IC_CONNECT == BT)
     sendCommandBt(request, n, buffer, limit);
   else
     sendCommandWifi(request, n, buffer, limit);
@@ -432,7 +462,7 @@ void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
 // View GUI
 void viewGUI()
 {
-  // IC Connect 
+  // IC Connect
   M5.Lcd.setFreeFont(0);
   M5.Lcd.setTextDatum(CC_DATUM);
 
@@ -440,20 +470,19 @@ void viewGUI()
   M5.Lcd.drawRoundRect(283, 90, 34, 20, 2, TFT_MODE_BORDER);
   M5.Lcd.setTextColor(TFT_WHITE);
 
-  if(IC_CONNECT == BT)
+  if (IC_CONNECT == BT)
     M5.Lcd.drawString("BT", 300, 96);
   else
     M5.Lcd.drawString("USB", 300, 96);
 
   M5.Lcd.drawString(String(IC_MODEL), 300, 105);
 
+  // M5.Lcd.drawFastHLine(0, 57, 320, TFT_FIL_BORDER);
+  // M5.Lcd.drawFastHLine(0, 86, 320, TFT_FIL_BORDER);
 
-  //M5.Lcd.drawFastHLine(0, 57, 320, TFT_FIL_BORDER);
-  //M5.Lcd.drawFastHLine(0, 86, 320, TFT_FIL_BORDER);
-
-  //M5.Lcd.drawJpg(logo, sizeof(logo), 272, 0, 44, 22);
-  //M5.Lcd.drawJpg(logo, sizeof(logo), 40, 0, 44, 22);
-  //M5.Lcd.drawJpg(logo, sizeof(logo), 272, 94, 44, 22);
+  // M5.Lcd.drawJpg(logo, sizeof(logo), 272, 0, 44, 22);
+  // M5.Lcd.drawJpg(logo, sizeof(logo), 40, 0, 44, 22);
+  // M5.Lcd.drawJpg(logo, sizeof(logo), 272, 94, 44, 22);
 
   M5.Lcd.drawJpg(logo, sizeof(logo), 0, 49, 44, 22);
 
@@ -635,8 +664,8 @@ void viewGUI()
   M5.Lcd.drawFastHLine(280, 232, 30, TFT_FIL_BORDER);
 
   // AF Gain & SQL
-  //M5.Lcd.fillRect(220, 146, 100, 45, TFT_BLACK);
-  //M5.Lcd.drawRect(220, 146, 100, 45, TFT_FIL_BORDER);
+  // M5.Lcd.fillRect(220, 146, 100, 45, TFT_BLACK);
+  // M5.Lcd.drawRect(220, 146, 100, 45, TFT_FIL_BORDER);
 
   M5.Lcd.fillRect(230, 135, 60, 10, TFT_BLACK);
   M5.Lcd.fillRect(230, 157, 60, 10, TFT_BLACK);
@@ -725,7 +754,7 @@ void clearGUI()
 }
 
 // Clear Data
-void clearData() 
+void clearData()
 {
   sOld = 255;
   SWROld = 255;
@@ -997,53 +1026,61 @@ void wakeAndSleep()
 
     vTaskDelay(100);
   }
-  else if (screensaverMode == 1) {
-  
+  else if (screensaverMode == 1)
+  {
+
     M5.Lcd.fillRect(x, y, 44, 22, TFT_BLACK);
 
-    if(xDir)
+    if (xDir)
     {
       x += 1;
     }
-    else {
+    else
+    {
       x -= 1;
     }
 
-    if(yDir)
+    if (yDir)
     {
       y += 1;
     }
-    else {
+    else
+    {
       y -= 1;
     }
 
-    if(x < 44) {
+    if (x < 44)
+    {
       xDir = true;
       x = 44;
     }
-    else if(x > 232) {
+    else if (x > 232)
+    {
       xDir = false;
       x = 232;
     }
 
-    if(y < 22) {
+    if (y < 22)
+    {
       yDir = true;
       y = 22;
     }
-    else if(y > 196) {
+    else if (y > 196)
+    {
       yDir = false;
       y = 196;
     }
 
     M5.Lcd.drawJpg(logo, sizeof(logo), x, y, 44, 22);
 
-    if(IC_MODEL == 705 && IC_CONNECT == BT && btConnected == false)
+    if (IC_MODEL == 705 && IC_CONNECT == BT && btConnected == false)
       vTaskDelay(75);
-    else if(IC_CONNECT == USB && wifiConnected == false)
+    else if (IC_CONNECT == USB && wifiConnected == false)
       vTaskDelay(75);
   }
 
-  if(DEBUG) {
+  if (DEBUG)
+  {
     Serial.print(screensaverMode);
     Serial.print(" ");
     Serial.println(millis() - screensaver);
@@ -1054,32 +1091,74 @@ void wakeAndSleep()
 boolean checkConnection()
 {
   HTTPClient http;
+
   uint16_t httpCode;
+
   String message = "";
   String command = "";
+  String response = "";
 
-  if(screensaverMode == 0) {
+  char buffer[8];
+  char request[] = {0xFE, 0xFE, CI_V_ADDRESS, 0xE0, 0x03, 0xFD};
+
+  char s[4];
+  for (uint8_t i = 0; i < 6; i++)
+  {
+    sprintf(s, "%02x,", request[i]);
+    command += String(s);
+  }
+
+  command += BAUDE_RATE + String(",") + SERIAL_DEVICE;
+
+  if (screensaverMode == 0)
+  {
     if (IC_MODEL == 705 && IC_CONNECT == BT && btConnected == false)
       message = "Check Pairing";
     else if (IC_CONNECT == USB && wifiConnected == false)
       message = "Check Wifi";
-    else if (IC_CONNECT == USB && proxyConnected == false) 
+    else if (IC_CONNECT == USB && (proxyConnected == false || txConnected == false))
     {
-      message = "Check Proxy";
-
-      command = BAUDE_RATE + String(",") + SERIAL_DEVICE;
-
       http.begin(civClient, PROXY_URL + String(":") + PROXY_PORT + String("/") + String("?civ=") + command); // Specify the URL
-      http.addHeader("User-Agent", "M5Stack");                                       // Specify header
-      http.addHeader("Connection", "keep-alive");                                    // Specify header
-      http.setTimeout(100);                                                          // Set Time Out
-      httpCode = http.GET();                                                         // Make the request
-      if(httpCode == 200) {
+      http.addHeader("User-Agent", "M5Stack");                                                               // Specify header
+      http.addHeader("Connection", "keep-alive");                                                            // Specify header
+      http.setTimeout(100);                                                                                  // Set Time Out
+      httpCode = http.GET();                                                                                 // Make the request
+      if (httpCode == 200)
+      {
         proxyConnected = true;
-        frequencyOld = "";
+
+        response = http.getString(); // Get data
+        response.trim();
+
+        if (response != "")
+        {
+          if(startup == false)
+          {
+            M5.Lcd.wakeup();
+            Serial.println("TX connected");
+          }
+
+          txConnected = true;
+          message = "";
+        }
+        else
+        {
+          if(startup == false)
+          {
+            M5.Lcd.sleep();
+            Serial.println("TX disconnected");
+          }
+
+          message = "Check TX";
+        }
+      }
+      else
+      {
+        message = "Check Proxy";
       }
     }
-    if(message != "")
+
+    if (message != "")
     {
       M5.Lcd.setTextDatum(CC_DATUM);
       M5.Lcd.setFreeFont(&UniversCondensed20pt7b);
@@ -1089,8 +1168,7 @@ boolean checkConnection()
       vTaskDelay(500);
       M5.Lcd.drawString("", 160, 70);
       vTaskDelay(100);
-      Serial.println("No TX communication");
-
+      frequencyOld = "";
       return false;
     }
   }

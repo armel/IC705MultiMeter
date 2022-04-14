@@ -79,7 +79,9 @@ boolean screensaverMode = 0;
 boolean btConnected = false;
 boolean wifiConnected = false;
 boolean proxyConnected = false;
+boolean txConnected = true;
 boolean needClear = true;
+boolean startup = true;
 
 uint8_t sOld = 255;
 uint8_t SWROld = 255;
